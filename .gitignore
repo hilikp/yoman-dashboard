@@ -1,0 +1,12 @@
+# backups exported from the dashboard
+yoman-backup-*.json
+
+# editors / os
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+
+# never commit credentials
+*.token
+.env

@@ -1,0 +1,1308 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>היומן של יחיאל</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@500;700&display=swap">
+<style>
+:root{
+  --paper:#eceef2;
+  --surface:#ffffff;
+  --surface-2:#f5f6f9;
+  --line:#dde1e8;
+  --line-soft:#e8ebf0;
+  --ink:#161a21;
+  --ink-2:#48525f;
+  --muted:#7a8494;
+  --accent:#33478f;
+  --accent-soft:#e5e8f4;
+  --on-accent:#ffffff;
+  --work:#33478f;
+  --work-soft:#e5e8f4;
+  --personal:#0e6b63;
+  --personal-soft:#dcefec;
+  --urgent:#a52c2c;
+  --urgent-soft:#f7e3e3;
+  --high:#9a6208;
+  --high-soft:#f8eddb;
+  --normal:#69748a;
+  --normal-soft:#eceef2;
+  --shadow:0 1px 2px rgba(20,26,40,.05), 0 6px 18px -12px rgba(20,26,40,.35);
+  --radius:10px;
+  --note-amber:#fbefcb;
+  --note-mint:#d8efe1;
+  --note-sky:#dce7f9;
+  --note-rose:#fadee1;
+  --note-ink:#2c2d33;
+  --note-edge:rgba(0,0,0,.09);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#11141a;
+    --surface:#191d25;
+    --surface-2:#20252f;
+    --line:#2b313c;
+    --line-soft:#242a34;
+    --ink:#e7eaf0;
+    --ink-2:#aeb7c5;
+    --muted:#7f8998;
+    --accent:#93a5e6;
+    --accent-soft:#232a44;
+    --on-accent:#11141a;
+    --work:#93a5e6;
+    --work-soft:#222945;
+    --personal:#4fbcae;
+    --personal-soft:#12332f;
+    --urgent:#e59191;
+    --urgent-soft:#3a2222;
+    --high:#dfad63;
+    --high-soft:#372a17;
+    --normal:#8f9aac;
+    --normal-soft:#252b35;
+    --note-amber:#3b3118;
+    --note-mint:#153229;
+    --note-sky:#1b2a45;
+    --note-rose:#3a2025;
+    --note-ink:#e6e9ef;
+    --note-edge:rgba(255,255,255,.09);
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 22px -14px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#11141a;
+  --surface:#191d25;
+  --surface-2:#20252f;
+  --line:#2b313c;
+  --line-soft:#242a34;
+  --ink:#e7eaf0;
+  --ink-2:#aeb7c5;
+  --muted:#7f8998;
+  --accent:#93a5e6;
+  --accent-soft:#232a44;
+  --on-accent:#11141a;
+  --work:#93a5e6;
+  --work-soft:#222945;
+  --personal:#4fbcae;
+  --personal-soft:#12332f;
+  --urgent:#e59191;
+  --urgent-soft:#3a2222;
+  --high:#dfad63;
+  --high-soft:#372a17;
+  --normal:#8f9aac;
+  --normal-soft:#252b35;
+  --note-amber:#3b3118;
+  --note-mint:#153229;
+  --note-sky:#1b2a45;
+  --note-rose:#3a2025;
+  --note-ink:#e6e9ef;
+  --note-edge:rgba(255,255,255,.09);
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 22px -14px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+html{color-scheme:light dark}
+img{max-width:100%}
+[hidden]{display:none!important}
+body{
+  margin:0;
+  direction:rtl;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:"Assistant","Segoe UI",Arial,sans-serif;
+  font-size:15px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 20px 64px}
+
+/* ---------- header ---------- */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:18px}
+h1{
+  font-family:"Frank Ruhl Libre",Georgia,serif;
+  font-weight:700;font-size:31px;line-height:1.15;margin:0;letter-spacing:-.01em;
+  text-wrap:balance;
+}
+.datestrip{color:var(--muted);font-size:14px;margin-top:3px;font-variant-numeric:tabular-nums}
+.statusdot{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+.statusdot i{width:7px;height:7px;border-radius:50%;background:var(--muted);display:block}
+.statusdot.on i{background:var(--personal)}
+.statusdot.off i{background:var(--urgent)}
+
+/* ---------- sync bar & setup ---------- */
+.syncbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:0 0 14px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.link{background:none;border:none;padding:0;color:var(--muted);font-size:12.5px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.link:hover{color:var(--accent)}
+.link.danger:hover{color:var(--urgent)}
+.setup{
+  background:var(--surface);border:1px solid var(--line);border-inline-start:3px solid var(--accent);
+  border-radius:var(--radius);padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow);
+}
+.setup h3{margin:0 0 6px;font-family:"Frank Ruhl Libre",Georgia,serif;font-size:18px}
+.setup p{margin:0 0 10px;color:var(--ink-2);font-size:14px;max-width:66ch}
+.setup ol{margin:0 0 14px;padding-inline-start:20px;color:var(--ink-2);font-size:13.5px;display:flex;flex-direction:column;gap:4px}
+.setup a{color:var(--accent)}
+.setup code{background:var(--surface-2);padding:1px 5px;border-radius:4px;font-size:12.5px}
+.setuprow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.setuprow input{flex:1 1 320px;min-width:200px;font-family:ui-monospace,Consolas,monospace;font-size:13px}
+.setuperr{margin-top:9px;color:var(--urgent);font-size:13px;min-height:1em}
+
+/* ---------- summary ---------- */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:11px 14px;display:flex;flex-direction:column;gap:2px;
+}
+.stat .n{font-size:24px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat .l{font-size:12.5px;color:var(--muted);letter-spacing:.02em}
+.stat.alert{border-color:color-mix(in srgb,var(--urgent) 45%,var(--line));background:var(--urgent-soft)}
+.stat.alert .n{color:var(--urgent)}
+.stat.today .n{color:var(--accent)}
+
+/* ---------- add bar ---------- */
+.addbar{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:10px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  box-shadow:var(--shadow);
+}
+.addbar input[type=text]{flex:1 1 260px;min-width:180px}
+input,select,textarea{
+  font-family:inherit;font-size:14px;color:var(--ink);background:var(--surface-2);
+  border:1px solid var(--line);border-radius:8px;padding:8px 10px;
+}
+input[type=date]{font-variant-numeric:tabular-nums}
+input:focus-visible,select:focus-visible,button:focus-visible{
+  outline:2px solid var(--accent);outline-offset:1px;
+}
+button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;border:1px solid transparent}
+.btn-primary{background:var(--accent);color:var(--on-accent);padding:8px 18px;font-weight:600;border:none}
+.btn-primary:hover{filter:brightness(1.08)}
+
+/* ---------- toolbar ---------- */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.seg{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{background:transparent;color:var(--ink-2);padding:6px 14px;border:none;border-inline-start:1px solid var(--line-soft);font-size:13.5px}
+.seg button:first-child{border-inline-start:none}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.ghost{background:transparent;color:var(--muted);padding:6px 10px;border:1px solid var(--line);font-size:13.5px}
+.ghost:hover{color:var(--ink);border-color:var(--muted)}
+
+/* ---------- lanes ---------- */
+.lanes{display:grid;grid-template-columns:1.05fr .85fr 216px;gap:16px;align-items:start}
+.lane{display:flex;flex-direction:column;gap:14px}
+.lanehead{display:flex;align-items:center;gap:9px;padding-bottom:2px}
+.lanehead h2{
+  font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;font-size:20px;margin:0;
+}
+.lanehead .dot{width:9px;height:9px;border-radius:2px;transform:rotate(45deg)}
+.lane.work .dot{background:var(--work)}
+.lane.personal .dot{background:var(--personal)}
+.lanehead .count{margin-inline-start:auto;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.card > h3{
+  margin:0;font-size:12.5px;font-weight:600;letter-spacing:.06em;color:var(--muted);
+  padding:10px 14px;border-bottom:1px solid var(--line-soft);display:flex;align-items:center;gap:8px;
+}
+.card > h3 .n{margin-inline-start:auto;font-variant-numeric:tabular-nums;letter-spacing:0}
+
+.rows{display:flex;flex-direction:column}
+.row{
+  display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;
+  padding:11px 14px 11px 12px;border-bottom:1px solid var(--line-soft);
+  border-inline-start:3px solid transparent;position:relative;
+}
+.row:last-child{border-bottom:none}
+.row.p-urgent{border-inline-start-color:var(--urgent)}
+.row.p-high{border-inline-start-color:var(--high)}
+.row.p-normal{border-inline-start-color:var(--line)}
+.row.is-done{opacity:.5}
+.row:hover{background:var(--surface-2)}
+
+.tick{
+  width:19px;height:19px;border-radius:50%;border:1.5px solid var(--muted);background:transparent;
+  margin-top:2px;padding:0;display:grid;place-items:center;flex:none;color:transparent;font-size:11px;line-height:1;
+}
+.tick:hover{border-color:var(--accent);color:var(--muted)}
+.row.is-done .tick{background:var(--personal);border-color:var(--personal);color:var(--surface)}
+
+.body .title{font-weight:600;font-size:14.5px;line-height:1.35;word-break:break-word}
+.row.is-done .title{text-decoration:line-through;font-weight:500}
+.body .note{font-size:13px;color:var(--ink-2);margin-top:2px;word-break:break-word}
+.body a{color:var(--accent)}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{
+  font-size:11.5px;padding:2px 8px;border-radius:99px;background:var(--normal-soft);color:var(--ink-2);
+  display:inline-flex;align-items:center;gap:4px;white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+.chip.urgent{background:var(--urgent-soft);color:var(--urgent);font-weight:600}
+.chip.high{background:var(--high-soft);color:var(--high);font-weight:600}
+.chip.late{background:var(--urgent-soft);color:var(--urgent);font-weight:700}
+.chip.today{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.chip.work{background:var(--work-soft);color:var(--work)}
+.chip.personal{background:var(--personal-soft);color:var(--personal)}
+
+.acts{display:flex;gap:2px;opacity:0;transition:opacity .12s}
+.row:hover .acts,.row:focus-within .acts{opacity:1}
+.acts button{background:transparent;color:var(--muted);padding:3px 7px;font-size:12.5px;border:none}
+.acts button:hover{color:var(--ink);background:var(--line-soft)}
+.acts button.del:hover{color:var(--urgent)}
+
+.empty{padding:16px 14px;color:var(--muted);font-size:13.5px}
+.timegroup{
+  padding:7px 14px;font-size:12px;font-weight:600;color:var(--ink-2);background:var(--surface-2);
+  border-bottom:1px solid var(--line-soft);letter-spacing:.02em;
+}
+.donebox summary{
+  cursor:pointer;padding:9px 14px;font-size:12.5px;color:var(--muted);list-style:none;
+}
+.donebox summary::-webkit-details-marker{display:none}
+.donebox summary::before{content:"▾ ";display:inline-block}
+.donebox[open] summary::before{content:"▴ "}
+
+.banner{
+  background:var(--high-soft);color:var(--high);border:1px solid color-mix(in srgb,var(--high) 35%,transparent);
+  border-radius:var(--radius);padding:10px 14px;font-size:13.5px;margin-bottom:14px;
+}
+.foot{margin-top:26px;font-size:12.5px;color:var(--muted);text-align:center}
+.sample-tag{font-size:10.5px;border:1px dashed var(--muted);color:var(--muted);border-radius:99px;padding:1px 7px}
+
+
+/* ---------- sticky notes ---------- */
+.notes{margin-top:24px}
+.notes .lanehead{margin-bottom:10px}
+.notes .lanehead .dot{background:var(--high)}
+.notes .lanehead .spacer{margin-inline-start:auto}
+.noteboard{display:grid;grid-template-columns:repeat(auto-fill,minmax(198px,1fr));gap:12px;align-items:start}
+.sticky{
+  background:var(--note-amber);color:var(--note-ink);border:1px solid var(--note-edge);
+  border-radius:4px;padding:11px 12px 5px;display:flex;flex-direction:column;min-height:134px;
+  box-shadow:0 1px 2px rgba(20,26,40,.10), 0 10px 18px -14px rgba(20,26,40,.6);
+}
+.sticky.c-mint{background:var(--note-mint)}
+.sticky.c-sky{background:var(--note-sky)}
+.sticky.c-rose{background:var(--note-rose)}
+.sticky:nth-child(3n+1){transform:rotate(-.45deg)}
+.sticky:nth-child(3n+2){transform:rotate(.35deg)}
+.sticky textarea{
+  background:transparent;border:none;padding:0;margin:0 0 6px;resize:none;color:inherit;width:100%;
+  font-family:inherit;font-size:14px;line-height:1.45;flex:1;min-height:78px;
+}
+.sticky textarea:focus{outline:none}
+.sticky textarea::placeholder{color:currentColor;opacity:.42}
+.notefoot{display:flex;align-items:center;gap:5px;border-top:1px solid var(--note-edge);padding-top:5px;font-size:11px}
+.notedate{margin-inline-end:auto;opacity:.6;font-variant-numeric:tabular-nums}
+.notefoot button{background:transparent;border:none;color:inherit;font-size:12px;padding:3px 6px;border-radius:5px;opacity:.6;line-height:1}
+.notefoot button:hover{opacity:1;background:var(--note-edge)}
+.addnote-tile{
+  border:1.5px dashed var(--line);border-radius:4px;min-height:134px;background:transparent;
+  color:var(--muted);font-size:13.5px;display:flex;align-items:center;justify-content:center;
+}
+.addnote-tile:hover{border-color:var(--accent);color:var(--accent)}
+.banner button.undo{background:transparent;border:1px solid currentColor;color:inherit;padding:1px 9px;font-size:12.5px;margin-inline-start:6px}
+
+/* ---------- shopping list ---------- */
+.shopadd{display:flex;gap:6px;padding:9px 12px;border-bottom:1px solid var(--line-soft)}
+.shopadd input{flex:1;min-width:0;padding:6px 9px;font-size:13.5px}
+.shopadd button{background:var(--personal-soft);color:var(--personal);border:none;width:34px;flex:none;font-size:18px;font-weight:600;line-height:1;padding:0}
+.shopadd button:hover{filter:brightness(.95)}
+.row.slim{padding:8px 12px;border-inline-start-width:0}
+.row.slim .title{font-weight:500;font-size:14px}
+.row.slim .tick{width:17px;height:17px;margin-top:1px}
+.clearbought{display:block;width:100%;background:transparent;border:none;border-top:1px solid var(--line-soft);color:var(--muted);padding:8px;font-size:12.5px;border-radius:0}
+.clearbought:hover{color:var(--urgent);background:var(--surface-2)}
+.shopempty{padding:14px 12px;color:var(--muted);font-size:13.5px}
+
+/* ---------- calendar ---------- */
+.cal{position:sticky;top:14px}
+.calhead{display:flex;align-items:center;gap:6px;padding:10px 10px 6px}
+.calmonth{flex:1;text-align:center;font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;font-size:14px}
+.navbtn{background:transparent;border:1px solid var(--line);color:var(--ink-2);width:24px;height:24px;padding:0;border-radius:6px;font-size:13px;line-height:1;flex:none}
+.navbtn:hover{background:var(--surface-2);color:var(--ink)}
+.calseg{display:flex;gap:4px;padding:0 10px 9px}
+.calseg button{flex:1;font-size:12px;padding:4px 0;border:1px solid var(--line);background:transparent;color:var(--ink-2)}
+.calseg button:hover{color:var(--ink)}
+.calseg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);border-color:transparent;font-weight:600}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:0 8px 6px}
+.dow{font-size:10.5px;color:var(--muted);text-align:center;padding-bottom:3px}
+.day{
+  position:relative;aspect-ratio:1;border:none;background:transparent;color:var(--ink-2);
+  font-size:12px;border-radius:7px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;padding:0;font-variant-numeric:tabular-nums;
+}
+.day:hover{background:var(--surface-2);color:var(--ink)}
+.day.off{opacity:.4}
+.day.today{box-shadow:inset 0 0 0 1.5px var(--accent);color:var(--accent);font-weight:700}
+.day.sel{background:var(--accent);color:var(--on-accent);font-weight:700;box-shadow:none}
+.day.sel .dots i{background:var(--on-accent)}
+.dots{display:flex;gap:2px;height:4px}
+.dots i{width:4px;height:4px;border-radius:50%;display:block}
+.dots i.w{background:var(--work)}
+.dots i.p{background:var(--personal)}
+.dots i.u{background:var(--urgent)}
+.day.done-only::after{content:"\2713";position:absolute;bottom:1px;font-size:8px;color:var(--personal);opacity:.8}
+.calgrid.week .day{aspect-ratio:auto;height:50px;font-size:13px}
+.callegend{display:flex;gap:11px;justify-content:center;padding:8px;font-size:10.5px;color:var(--muted);border-top:1px solid var(--line-soft)}
+.callegend span{display:inline-flex;align-items:center;gap:4px}
+.callegend i{width:5px;height:5px;border-radius:50%;display:block}
+.ghost.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+
+@media (max-width:1040px){
+  .lanes{grid-template-columns:1fr 1fr}
+  .lane.cal{grid-column:1 / -1;order:-1;max-width:430px;position:static}
+}
+@media (max-width:880px){
+  .lanes{grid-template-columns:1fr}
+  .summary{grid-template-columns:repeat(2,1fr)}
+  h1{font-size:26px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap" lang="he">
+  <div class="top">
+    <div>
+      <h1>היומן של יחיאל</h1>
+      <div class="datestrip" id="datestrip"></div>
+    </div>
+    <div class="statusdot" id="status"><i></i><span>מתחבר…</span></div>
+  </div>
+
+  <div class="syncbar">
+    <button type="button" class="link" id="btn-sync">סנכרון עכשיו</button>
+    <button type="button" class="link" id="btn-export">ייצוא גיבוי</button>
+    <label class="link" for="file-import">ייבוא גיבוי</label>
+    <input type="file" id="file-import" accept="application/json,.json" hidden>
+    <button type="button" class="link" id="btn-connect-open">חיבור לגיטהב</button>
+    <button type="button" class="link danger" id="btn-disconnect" hidden>ניתוק</button>
+  </div>
+
+  <section class="setup" id="setup" hidden>
+    <h3>חיבור לגיטהב</h3>
+    <p>הדשבורד שומר את הנתונים ב-Gist <strong>פרטי</strong> בחשבון הגיטהב שלך. הטוקן נשמר בדפדפן הזה בלבד, ונשלח אך ורק אל <code>api.github.com</code>.</p>
+    <ol>
+      <li>פתח <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">יצירת Fine-grained token</a> בגיטהב.</li>
+      <li>תחת <strong>Account permissions</strong> בחר <strong>Gists: Read and write</strong>. אל תסמן שום הרשאה נוספת.</li>
+      <li>קבע תוקף (למשל 90 יום), לחץ Generate, והעתק את הטוקן.</li>
+    </ol>
+    <div class="setuprow">
+      <input type="password" id="tokinput" placeholder="github_pat_..." autocomplete="off" aria-label="טוקן גיטהב">
+      <button type="button" class="btn-primary" id="btn-connect">חיבור</button>
+      <button type="button" class="ghost" id="btn-skip">להמשיך בלי סנכרון</button>
+    </div>
+    <div class="setuperr" id="setup-err" role="status"></div>
+  </section>
+
+  <div class="summary" id="summary"></div>
+
+  <form class="addbar" id="addform">
+    <input type="text" id="f-title" placeholder="מה צריך לעשות?" autocomplete="off" required>
+    <select id="f-domain" aria-label="תחום">
+      <option value="work">עבודה</option>
+      <option value="personal">אישי</option>
+    </select>
+    <select id="f-kind" aria-label="סוג">
+      <option value="task">משימה</option>
+      <option value="email">מייל לטיפול</option>
+      <option value="meeting">פגישה</option>
+      <option value="shopping">קניות</option>
+    </select>
+    <select id="f-priority" aria-label="עדיפות">
+      <option value="normal">רגיל</option>
+      <option value="high">חשוב</option>
+      <option value="urgent">דחוף</option>
+    </select>
+    <input type="date" id="f-due" aria-label="תאריך יעד">
+    <button type="submit" class="btn-primary">הוספה</button>
+  </form>
+
+  <div class="toolbar">
+    <div class="seg" role="group" aria-label="סינון לפי תחום">
+      <button type="button" data-filter="all" aria-pressed="true">הכל</button>
+      <button type="button" data-filter="work" aria-pressed="false">עבודה</button>
+      <button type="button" data-filter="personal" aria-pressed="false">אישי</button>
+    </div>
+    <button type="button" class="ghost" id="btn-late">רק באיחור ולהיום</button>
+    <button type="button" class="ghost" id="btn-clear" hidden>ניקוי דוגמאות</button>
+    <span id="daychip"></span>
+  </div>
+
+  <div id="banner"></div>
+
+  <div class="lanes">
+    <section class="lane work">
+      <div class="lanehead"><span class="dot"></span><h2>עבודה</h2><span class="count" id="c-work"></span></div>
+      <div id="work-sections"></div>
+    </section>
+    <section class="lane personal">
+      <div class="lanehead"><span class="dot"></span><h2>אישי</h2><span class="count" id="c-personal"></span></div>
+      <div id="personal-sections"></div>
+    </section>
+    <aside class="lane cal" id="calendar"></aside>
+  </div>
+
+  <section class="notes">
+    <div class="lanehead">
+      <span class="dot"></span><h2>פתקים</h2>
+      <span class="spacer"></span>
+      <button type="button" class="ghost" id="addnote">+ פתק חדש</button>
+    </div>
+    <div class="noteboard" id="noteboard"></div>
+  </section>
+
+  <p class="foot">הנתונים נשמרים ב-Gist פרטי בחשבון הגיטהב שלך, עם עותק מקומי בדפדפן</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var PRIO = {urgent:{he:"דחוף",rank:0},high:{he:"חשוב",rank:1},normal:{he:"רגיל",rank:2}};
+  var KIND = {task:"משימה",email:"מייל",meeting:"פגישה",shopping:"קניות"};
+
+  var items = [], notes = [], loaded = false, savedAt = "";
+  var state = {filter:"all", onlyUrgentWindow:false, view:"month", cursor:"", selected:null};
+
+  /* ---------- helpers ---------- */
+  function esc(s){
+    return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function todayISO(d){
+    d = d || new Date();
+    return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+  }
+  function addDaysISO(iso,n){
+    var p = iso.split("-");
+    var d = new Date(+p[0],+p[1]-1,+p[2]);
+    d.setDate(d.getDate()+n);
+    return todayISO(d);
+  }
+  var TODAY = todayISO();
+  var WEEK_END = addDaysISO(TODAY,7);
+
+  var dayFmt = new Intl.DateTimeFormat("he-IL",{weekday:"long"});
+  var dateFmt = new Intl.DateTimeFormat("he-IL",{day:"numeric",month:"short"});
+  var longFmt = new Intl.DateTimeFormat("he-IL",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+
+  function toDate(iso){var p=iso.split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
+  function dueLabel(iso){
+    if(!iso) return "";
+    if(iso===TODAY) return "היום";
+    if(iso===addDaysISO(TODAY,1)) return "מחר";
+    if(iso===addDaysISO(TODAY,-1)) return "אתמול";
+    var d = toDate(iso);
+    if(iso>TODAY && iso<=WEEK_END) return dayFmt.format(d);
+    return dateFmt.format(d);
+  }
+  function startOfWeekISO(iso){var d=toDate(iso);d.setDate(d.getDate()-d.getDay());return todayISO(d);}
+  function firstOfMonthISO(iso,shift){var d=toDate(iso);return todayISO(new Date(d.getFullYear(),d.getMonth()+(shift||0),1));}
+  var monthFmt = new Intl.DateTimeFormat("he-IL",{month:"long",year:"numeric"});
+  var dayLongFmt = new Intl.DateTimeFormat("he-IL",{weekday:"long",day:"numeric",month:"long"});
+
+  function isOverdue(it){return !it.done && it.due && it.due < TODAY;}
+  function isToday(it){return !it.done && it.due === TODAY;}
+
+  function sortItems(a,b){
+    var pa = (PRIO[a.priority]||PRIO.normal).rank, pb = (PRIO[b.priority]||PRIO.normal).rank;
+    var oa = isOverdue(a)?0:1, ob = isOverdue(b)?0:1;
+    if(oa!==ob) return oa-ob;
+    if(pa!==pb) return pa-pb;
+    var da = a.due||"9999-99-99", db_ = b.due||"9999-99-99";
+    if(da!==db_) return da<db_?-1:1;
+    return (a.createdAt||"") < (b.createdAt||"") ? -1 : 1;
+  }
+  function sortByTime(a,b){
+    var da=(a.due||"9999-99-99")+(a.time||"99:99"), db_=(b.due||"9999-99-99")+(b.time||"99:99");
+    return da<db_?-1:da>db_?1:0;
+  }
+
+  /* ---------- data ---------- */
+  function setStatus(kind,text){
+    var el = document.getElementById("status");
+    el.className = "statusdot " + kind;
+    el.querySelector("span").textContent = text;
+  }
+
+  /* ---------- storage: private GitHub Gist + local cache ---------- */
+  var CACHE_KEY = "yoman.cache.v1";
+  var TOKEN_KEY = "yoman.gh.token";
+  var GIST_KEY  = "yoman.gh.gist";
+  var GIST_FILE = "yoman-data.json";
+  var GIST_DESC = "yoman-dashboard \u2014 private data";
+
+  var NOTE_COLORS = ["amber","mint","sky","rose"];
+  var editingNote = null, focusNoteId = null, pendingUndo = null;
+
+  var token = "", gistId = "";
+  var dirty = false, pushTimer = null, syncBusy = false;
+  try{ token  = localStorage.getItem(TOKEN_KEY) || ""; }catch(e){}
+  try{ gistId = localStorage.getItem(GIST_KEY)  || ""; }catch(e){}
+
+  var SEED = [
+    {title:"לחזור ללקוח לגבי הצעת המחיר", domain:"work", kind:"task", priority:"urgent", due:addDaysISO(TODAY,0)},
+    {title:"מייל ממפיץ בגרמניה - ממתין לתשובה", domain:"work", kind:"email", priority:"high", due:addDaysISO(TODAY,1), from:"dach-partner"},
+    {title:"סנכרון שבועי צוות מכירות", domain:"work", kind:"meeting", priority:"normal", due:addDaysISO(TODAY,2), time:"10:00"},
+    {title:"לחדש ביטוח רכב", domain:"personal", kind:"task", priority:"high", due:addDaysISO(TODAY,3)},
+    {title:"חלב", domain:"personal", kind:"shopping", priority:"normal"}
+  ];
+
+  function newId(){ return "i" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+  function snapshot(){ return {version:1, savedAt:savedAt, items:items, notes:notes}; }
+
+  function saveCache(){
+    try{ localStorage.setItem(CACHE_KEY, JSON.stringify(snapshot())); }catch(e){}
+  }
+  function loadCache(){
+    try{
+      var raw = localStorage.getItem(CACHE_KEY);
+      if(!raw) return false;
+      var c = JSON.parse(raw);
+      items = c.items || []; notes = c.notes || []; savedAt = c.savedAt || "";
+      return true;
+    }catch(e){ return false; }
+  }
+  function seed(){
+    items = SEED.map(function(d){
+      return {
+        id:newId(), title:d.title, notes:"דוגמה - אפשר למחוק", domain:d.domain, kind:d.kind,
+        priority:d.priority, due:d.due||"", time:d.time||"", from:d.from||"", link:"",
+        done:false, doneAt:"", createdAt:new Date().toISOString(), sample:true
+      };
+    });
+    notes = [];
+    savedAt = new Date().toISOString();
+    saveCache();
+  }
+
+  /* every mutation funnels through touch() */
+  function touch(){
+    savedAt = new Date().toISOString();
+    dirty = true;
+    saveCache();
+    schedulePush();
+  }
+  function schedulePush(){
+    if(!token || !gistId){ setSync("local"); return; }
+    if(pushTimer) clearTimeout(pushTimer);
+    setSync("pending");
+    pushTimer = setTimeout(function(){ pushTimer = null; pushGist(); }, 900);
+  }
+  function setSync(kind, detail){
+    var map = {
+      ok:      ["on",  "נשמר בגיטהב"],
+      pending: ["",    "שומר\u2026"],
+      saving:  ["",    "מסנכרן\u2026"],
+      local:   ["off", "מקומי בלבד"],
+      error:   ["off", "שגיאת סנכרון"]
+    };
+    var m = map[kind] || ["", kind];
+    setStatus(m[0], m[1] + (detail ? " \u00b7 " + detail : ""));
+    var dc = document.getElementById("btn-disconnect");
+    if(dc) dc.hidden = !(token && gistId);
+    var co = document.getElementById("btn-connect-open");
+    if(co) co.hidden = !!(token && gistId);
+  }
+
+  async function gh(method, path, body){
+    var res = await fetch("https://api.github.com" + path, {
+      method: method,
+      headers: {
+        "Authorization": "Bearer " + token,
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "Content-Type": "application/json"
+      },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    if(!res.ok){
+      var msg = "";
+      try{ msg = (await res.json()).message || ""; }catch(e){}
+      var err = new Error(res.status + (msg ? " " + msg : ""));
+      err.status = res.status;
+      throw err;
+    }
+    return res.status === 204 ? null : res.json();
+  }
+
+  async function pushGist(){
+    if(!token || !gistId || syncBusy) return;
+    syncBusy = true; setSync("saving");
+    try{
+      var files = {};
+      files[GIST_FILE] = {content: JSON.stringify(snapshot(), null, 1)};
+      await gh("PATCH", "/gists/" + gistId, {files: files});
+      dirty = false;
+      setSync("ok");
+    }catch(e){
+      setSync("error", e.message);
+    }
+    syncBusy = false;
+  }
+
+  async function pullGist(adopt){
+    if(!token || !gistId) return "";
+    var g = await gh("GET", "/gists/" + gistId);
+    var f = g.files && g.files[GIST_FILE];
+    if(!f) return "";
+    var content = f.content;
+    if(f.truncated && f.raw_url){ content = await (await fetch(f.raw_url)).text(); }
+    var remote = JSON.parse(content || "{}");
+    if(adopt || (remote.savedAt || "") > (savedAt || "")){
+      items = remote.items || [];
+      notes = remote.notes || [];
+      savedAt = remote.savedAt || "";
+      dirty = false;
+      saveCache();
+      render(); renderNotes();
+    }
+    return remote.savedAt || "";
+  }
+
+  function persistCreds(){
+    try{
+      localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(GIST_KEY, gistId);
+    }catch(e){}
+  }
+
+  async function connect(raw){
+    var t = (raw || "").trim();
+    if(!t){ document.getElementById("setup-err").textContent = "צריך להדביק טוקן."; return; }
+    token = t;
+    setSync("saving");
+    document.getElementById("setup-err").textContent = "";
+    try{
+      var list = await gh("GET", "/gists?per_page=100");
+      var found = null;
+      for(var i = 0; i < list.length; i++){
+        if(list[i].files && list[i].files[GIST_FILE]){ found = list[i]; break; }
+      }
+      if(found){
+        gistId = found.id;
+        persistCreds();
+        var localItems = items.slice(), localNotes = notes.slice();
+        await pullGist(true);
+        var merged = false;
+        localItems.forEach(function(it){
+          if(!items.some(function(x){ return x.id === it.id; })){ items.push(it); merged = true; }
+        });
+        localNotes.forEach(function(nt){
+          if(!notes.some(function(x){ return x.id === nt.id; })){ notes.push(nt); merged = true; }
+        });
+        if(merged) touch();
+      } else {
+        gistId = "";
+        var files = {};
+        files[GIST_FILE] = {content: JSON.stringify(snapshot(), null, 1)};
+        var created = await gh("POST", "/gists", {description: GIST_DESC, public: false, files: files});
+        gistId = created.id;
+        persistCreds();
+      }
+      setSync("ok");
+      document.getElementById("setup").hidden = true;
+      render(); renderNotes();
+    }catch(e){
+      token = "";
+      var why = e.status === 401 ? "הטוקן נדחה על ידי גיטהב - בדוק שהעתקת אותו במלואו ושלא פג תוקפו."
+              : e.status === 403 ? "אין לטוקן הרשאת Gists: Read and write."
+              : "החיבור נכשל: " + e.message;
+      setSync("error");
+      document.getElementById("setup-err").textContent = why;
+    }
+  }
+
+  function disconnect(){
+    token = ""; gistId = "";
+    try{ localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(GIST_KEY); }catch(e){}
+    setSync("local");
+    document.getElementById("setup").hidden = false;
+    document.getElementById("setup-err").textContent = "";
+  }
+
+  function exportData(){
+    var blob = new Blob([JSON.stringify(snapshot(), null, 2)], {type:"application/json"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "yoman-backup-" + TODAY + ".json";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  function importData(file){
+    var fr = new FileReader();
+    fr.onload = function(){
+      try{
+        var d = JSON.parse(fr.result);
+        if(!d || !Array.isArray(d.items)) throw new Error("bad");
+        items = d.items; notes = Array.isArray(d.notes) ? d.notes : [];
+        touch(); render(); renderNotes();
+        flash("הגיבוי יובא בהצלחה.");
+      }catch(e){ flash("הקובץ לא תקין - צריך קובץ גיבוי של הדשבורד."); }
+    };
+    fr.readAsText(file);
+  }
+
+  (async function init(){
+    document.getElementById("datestrip").textContent = longFmt.format(new Date());
+    if(!loadCache() && !token) seed();
+    loaded = true;
+    render(); renderNotes();
+
+    if(!token || !gistId){
+      setSync("local");
+      document.getElementById("setup").hidden = false;
+      return;
+    }
+
+    setSync("saving");
+    try{
+      var remoteSaved = await pullGist(false);
+      if((savedAt || "") > (remoteSaved || "")){ dirty = true; pushGist(); }
+      else setSync("ok");
+    }catch(e){
+      if(e.status === 401){
+        setSync("error", "הטוקן נדחה");
+        document.getElementById("setup").hidden = false;
+        document.getElementById("setup-err").textContent = "הטוקן נדחה על ידי גיטהב. ייתכן שפג תוקפו - צור טוקן חדש והתחבר מחדש.";
+      } else {
+        setSync("error", e.message);
+      }
+    }
+
+    setInterval(function(){
+      if(document.visibilityState === "visible" && !dirty && !syncBusy){
+        pullGist(false).catch(function(){});
+      }
+    }, 60000);
+    document.addEventListener("visibilitychange", function(){
+      if(document.visibilityState === "visible" && !dirty && !syncBusy){
+        pullGist(false).catch(function(){});
+      }
+    });
+  })();
+
+  function addItem(data){
+    items.push({
+      id: newId(),
+      title: data.title, notes: data.notes || "",
+      domain: data.domain || "work", kind: data.kind || "task",
+      priority: data.priority || "normal",
+      due: data.due || "", time: data.time || "",
+      from: data.from || "", link: data.link || "",
+      done: false, doneAt: "", createdAt: new Date().toISOString(), sample: false
+    });
+    touch(); render();
+  }
+  function toggleDone(id){
+    var it = items.filter(function(x){ return x.id === id; })[0];
+    if(!it) return;
+    it.done = !it.done;
+    it.doneAt = it.done ? new Date().toISOString() : "";
+    touch(); render();
+  }
+  function removeItem(id){
+    items = items.filter(function(x){ return x.id !== id; });
+    touch(); render();
+  }
+  function snooze(id, days){
+    var it = items.filter(function(x){ return x.id === id; })[0];
+    if(!it) return;
+    var base = it.due && it.due > TODAY ? it.due : TODAY;
+    it.due = addDaysISO(base, days);
+    touch(); render();
+  }
+
+  function addNote(doc){
+    doc = doc || {text:"", color:NOTE_COLORS[notes.length % NOTE_COLORS.length], createdAt:new Date().toISOString()};
+    if(!doc.id) doc.id = newId();
+    notes.push(doc);
+    focusNoteId = doc.id;
+    touch(); renderNotes();
+  }
+  function saveNote(id, text){
+    var nt = notes.filter(function(x){ return x.id === id; })[0];
+    if(!nt || nt.text === text) return;
+    nt.text = text;
+    touch();
+  }
+  function cycleNoteColor(id){
+    var nt = notes.filter(function(x){ return x.id === id; })[0];
+    if(!nt) return;
+    nt.color = NOTE_COLORS[(NOTE_COLORS.indexOf(nt.color || "amber") + 1) % NOTE_COLORS.length];
+    touch(); renderNotes();
+  }
+  function deleteNote(id){
+    var nt = notes.filter(function(x){ return x.id === id; })[0];
+    if(!nt) return;
+    var backup = {text:nt.text || "", color:nt.color || "amber", createdAt:nt.createdAt || new Date().toISOString()};
+    notes = notes.filter(function(x){ return x.id !== id; });
+    touch(); renderNotes();
+    showUndo(backup);
+  }
+
+  function showUndo(backup){
+    var b = document.getElementById("banner");
+    pendingUndo = backup;
+    b.innerHTML = '<div class="banner">הפתק נמחק. <button type="button" class="undo" data-noteact="undo">שחזור</button></div>';
+    setTimeout(function(){
+      if(pendingUndo === backup){
+        pendingUndo = null;
+        b.innerHTML = "";
+      }
+    }, 8000);
+  }
+
+  function noteHTML(nt){
+    var d = nt.createdAt ? dateFmt.format(new Date(nt.createdAt)) : "";
+    return '<div class="sticky c-'+esc(nt.color||"amber")+'" data-note="'+esc(nt.id)+'">'+
+      '<textarea data-noteinput placeholder="לרשום לעצמי\u2026" aria-label="תוכן הפתק">'+esc(nt.text||"")+'</textarea>'+
+      '<div class="notefoot">'+
+        '<span class="notedate">'+esc(d)+'</span>'+
+        '<button type="button" data-noteact="color" title="החלפת צבע" aria-label="החלפת צבע">\u25d0</button>'+
+        '<button type="button" data-noteact="del" title="מחיקה" aria-label="מחיקת הפתק">\u2715</button>'+
+      '</div></div>';
+  }
+
+  function renderNotes(){
+    if(editingNote) return;
+    var board = document.getElementById("noteboard");
+    if(!board) return;
+    var sorted = notes.slice().sort(function(a,b){
+      return (a.createdAt||"") < (b.createdAt||"") ? -1 : 1;
+    });
+    board.innerHTML = sorted.map(noteHTML).join("") +
+      '<button type="button" class="addnote-tile" data-noteact="add">+ פתק חדש</button>';
+    if(focusNoteId){
+      var el = board.querySelector('[data-note="'+focusNoteId+'"] textarea');
+      focusNoteId = null;
+      if(el) el.focus();
+    }
+  }
+
+  function flash(msg){
+    var b = document.getElementById("banner");
+    b.innerHTML = '<div class="banner">'+esc(msg)+'</div>';
+    setTimeout(function(){
+      if(b.textContent.indexOf(msg)>-1) b.innerHTML = "";
+    },4000);
+  }
+
+  /* ---------- render ---------- */
+  var restoreShopFocus = null;
+
+  function visible(list){
+    if(state.selected) list = list.filter(function(i){return i.due===state.selected;});
+    if(state.filter!=="all") list = list.filter(function(i){return i.domain===state.filter;});
+    if(state.onlyUrgentWindow) list = list.filter(function(i){
+      return i.done || isOverdue(i) || isToday(i) || i.priority==="urgent";
+    });
+    return list;
+  }
+
+  function rowHTML(it,opts){
+    opts = opts||{};
+    var cls = "row p-"+(PRIO[it.priority]?it.priority:"normal")+(it.done?" is-done":"");
+    var chips = [];
+    if(isOverdue(it)) chips.push('<span class="chip late">באיחור · '+esc(dueLabel(it.due))+'</span>');
+    else if(isToday(it)) chips.push('<span class="chip today">היום'+(it.time?" · "+esc(it.time):"")+'</span>');
+    else if(it.due) chips.push('<span class="chip">'+esc(dueLabel(it.due))+(it.time?" · "+esc(it.time):"")+'</span>');
+    else if(it.time) chips.push('<span class="chip">'+esc(it.time)+'</span>');
+    if(it.priority==="urgent") chips.push('<span class="chip urgent">דחוף</span>');
+    else if(it.priority==="high") chips.push('<span class="chip high">חשוב</span>');
+    if(opts.showDomain) chips.push('<span class="chip '+esc(it.domain)+'">'+(it.domain==="work"?"עבודה":"אישי")+'</span>');
+    if(it.from) chips.push('<span class="chip">מאת '+esc(it.from)+'</span>');
+    if(it.sample) chips.push('<span class="sample-tag">דוגמה</span>');
+
+    var note = "";
+    if(it.notes) note += '<div class="note">'+esc(it.notes)+'</div>';
+    if(it.link) note += '<div class="note"><a href="'+esc(it.link)+'" target="_blank" rel="noopener">פתיחת הקישור</a></div>';
+
+    return '<div class="'+cls+'" data-id="'+esc(it.id)+'">'+
+      '<button class="tick" data-act="toggle" aria-label="'+(it.done?"ביטול סימון":"סימון כבוצע")+'">✓</button>'+
+      '<div class="body"><div class="title">'+esc(it.title)+'</div>'+note+
+        (chips.length?'<div class="meta">'+chips.join("")+'</div>':'')+
+      '</div>'+
+      '<div class="acts">'+
+        (it.done?'':'<button data-act="snooze" title="דחייה ליום הבא">↩ מחר</button>')+
+        '<button class="del" data-act="del" title="מחיקה">✕</button>'+
+      '</div></div>';
+  }
+
+  function section(title,list,opts){
+    opts = opts||{};
+    var inner;
+    if(!list.length){
+      if(opts.hideWhenEmpty) return "";
+      inner = '<div class="empty">'+esc(opts.empty||"אין פריטים פתוחים.")+'</div>';
+    } else {
+      inner = '<div class="rows">'+list.map(function(i){return rowHTML(i,opts);}).join("")+'</div>';
+    }
+    return '<div class="card"><h3>'+esc(title)+'<span class="n">'+list.length+'</span></h3>'+inner+'</div>';
+  }
+
+  function meetingsSection(list){
+    if(!list.length) return '<div class="card"><h3>פגישות בשבוע הקרוב<span class="n">0</span></h3>'+
+      '<div class="empty">אין פגישות רשומות לשבוע הקרוב.</div></div>';
+    var html = "", lastDay = "";
+    list.forEach(function(it){
+      var key = it.due||"";
+      if(key!==lastDay){
+        lastDay = key;
+        var label = key ? dueLabel(key)+" · "+dateFmt.format(toDate(key)) : "ללא תאריך";
+        html += '<div class="timegroup">'+esc(label)+'</div>';
+      }
+      html += rowHTML(it,{});
+    });
+    return '<div class="card"><h3>פגישות בשבוע הקרוב<span class="n">'+list.length+'</span></h3>'+
+      '<div class="rows">'+html+'</div></div>';
+  }
+
+  function shopRowHTML(it){
+    return '<div class="row slim'+(it.done?" is-done":"")+'" data-id="'+esc(it.id)+'">'+
+      '<button class="tick" data-act="toggle" aria-label="'+(it.done?"החזרה לרשימה":"סימון כנקנה")+'">\u2713</button>'+
+      '<div class="body"><div class="title">'+esc(it.title)+'</div>'+
+        (it.notes?'<div class="note">'+esc(it.notes)+'</div>':'')+'</div>'+
+      '<div class="acts"><button class="del" data-act="del" title="מחיקה">\u2715</button></div>'+
+    '</div>';
+  }
+
+  function shoppingSection(){
+    var list = items.filter(function(i){return i.kind==="shopping";});
+    var open = list.filter(function(i){return !i.done;})
+      .sort(function(a,b){return (a.createdAt||"")<(b.createdAt||"")?-1:1;});
+    var bought = list.filter(function(i){return i.done;})
+      .sort(function(a,b){return (a.doneAt||"")<(b.doneAt||"")?-1:1;});
+    var rows = open.concat(bought);
+    return '<div class="card">'+
+      '<h3>רשימת קניות<span class="n">'+open.length+'</span></h3>'+
+      '<form class="shopadd" id="shopform">'+
+        '<input type="text" id="s-title" placeholder="להוסיף פריט\u2026" autocomplete="off" aria-label="פריט חדש לרשימת הקניות">'+
+        '<button type="submit" aria-label="הוספה לרשימה">+</button>'+
+      '</form>'+
+      (rows.length
+        ? '<div class="rows">'+rows.map(shopRowHTML).join("")+'</div>'
+        : '<div class="shopempty">הרשימה ריקה. אפשר להוסיף פריט למעלה.</div>')+
+      (bought.length ? '<button type="button" class="clearbought" data-shop="clear">ניקוי שנקנו ('+bought.length+')</button>' : '')+
+    '</div>';
+  }
+
+  function doneSection(list){
+    if(!list.length) return "";
+    return '<details class="card donebox"><summary>בוצע לאחרונה ('+list.length+')</summary>'+
+      '<div class="rows">'+list.map(function(i){return rowHTML(i,{showDomain:state.filter==="all"});}).join("")+'</div></details>';
+  }
+
+
+  function calendarHTML(){
+    var byDay = {};
+    items.forEach(function(it){ if(it.due){ (byDay[it.due]=byDay[it.due]||[]).push(it); } });
+
+    var cells = [], label = "", weekCls = "";
+    if(state.view==="month"){
+      var first = firstOfMonthISO(state.cursor,0);
+      var fm = toDate(first).getMonth();
+      var start = addDaysISO(first, -toDate(first).getDay());
+      for(var i=0;i<42;i++) cells.push(addDaysISO(start,i));
+      if(toDate(cells[35]).getMonth()!==fm) cells = cells.slice(0,35);
+      label = monthFmt.format(toDate(first));
+    } else {
+      var ws = startOfWeekISO(state.cursor);
+      for(var j=0;j<7;j++) cells.push(addDaysISO(ws,j));
+      label = dateFmt.format(toDate(cells[0]))+" – "+dateFmt.format(toDate(cells[6]));
+      weekCls = " week";
+      var fm2 = toDate(cells[0]).getMonth();
+    }
+    var curMonth = toDate(state.view==="month" ? firstOfMonthISO(state.cursor,0) : cells[0]).getMonth();
+
+    var dows = ["א","ב","ג","ד","ה","ו","ש"].map(function(d){return '<span class="dow">'+d+'</span>';}).join("");
+
+    var days = cells.map(function(iso){
+      var list = (byDay[iso]||[]).slice().sort(sortItems);
+      var open = list.filter(function(x){return !x.done;});
+      var dots = open.slice(0,3).map(function(x){
+        var c = (isOverdue(x)||x.priority==="urgent") ? "u" : (x.domain==="work" ? "w" : "p");
+        return '<i class="'+c+'"></i>';
+      }).join("");
+      var cls = "day";
+      if(state.view==="month" && toDate(iso).getMonth()!==curMonth) cls += " off";
+      if(iso===TODAY) cls += " today";
+      if(iso===state.selected) cls += " sel";
+      if(list.length && !open.length) cls += " done-only";
+      var aria = dayLongFmt.format(toDate(iso)) + (open.length ? " – "+open.length+" פתוחים" : " – אין פריטים");
+      return '<button type="button" class="'+cls+'" data-day="'+iso+'" aria-label="'+esc(aria)+'" aria-pressed="'+(iso===state.selected)+'">'+
+             '<span>'+toDate(iso).getDate()+'</span><span class="dots">'+dots+'</span></button>';
+    }).join("");
+
+    return '<div class="card">'+
+      '<div class="calhead">'+
+        '<button type="button" class="navbtn" data-cal="prev" aria-label="הקודם">&#8250;</button>'+
+        '<div class="calmonth">'+esc(label)+'</div>'+
+        '<button type="button" class="navbtn" data-cal="next" aria-label="הבא">&#8249;</button>'+
+      '</div>'+
+      '<div class="calseg">'+
+        '<button type="button" data-calview="month" aria-pressed="'+(state.view==="month")+'">חודש</button>'+
+        '<button type="button" data-calview="week" aria-pressed="'+(state.view==="week")+'">שבוע</button>'+
+        '<button type="button" data-cal="today">היום</button>'+
+      '</div>'+
+      '<div class="calgrid'+weekCls+'">'+dows+days+'</div>'+
+      '<div class="callegend">'+
+        '<span><i style="background:var(--urgent)"></i>דחוף</span>'+
+        '<span><i style="background:var(--work)"></i>עבודה</span>'+
+        '<span><i style="background:var(--personal)"></i>אישי</span>'+
+      '</div></div>';
+  }
+
+  function render(){
+    if(!state.cursor) state.cursor = TODAY;
+    var act = document.activeElement;
+    var keepShop = act && act.id==="s-title" ? act.value : null;
+    restoreShopFocus = keepShop;
+    document.getElementById("calendar").innerHTML = calendarHTML();
+
+    var dc = document.getElementById("daychip");
+    dc.innerHTML = state.selected
+      ? '<button type="button" class="ghost on" data-cal="clearday">מציג: '+esc(dayLongFmt.format(toDate(state.selected)))+' &#10005;</button>'
+      : "";
+
+    var all = items.filter(function(i){return i.kind!=="shopping";});
+    var open = all.filter(function(i){return !i.done;});
+    var st = {
+      open: open.length,
+      today: open.filter(isToday).length,
+      late: open.filter(isOverdue).length,
+      doneToday: all.filter(function(i){return i.done && (i.doneAt||"").slice(0,10)===TODAY;}).length
+    };
+    document.getElementById("summary").innerHTML =
+      '<div class="stat"><span class="n">'+st.open+'</span><span class="l">פתוח</span></div>'+
+      '<div class="stat today"><span class="n">'+st.today+'</span><span class="l">להיום</span></div>'+
+      '<div class="stat'+(st.late?" alert":"")+'"><span class="n">'+st.late+'</span><span class="l">באיחור</span></div>'+
+      '<div class="stat"><span class="n">'+st.doneToday+'</span><span class="l">בוצע היום</span></div>';
+
+    document.getElementById("btn-clear").hidden = !all.some(function(i){return i.sample;});
+
+    if(!loaded){
+      document.getElementById("work-sections").innerHTML = '<div class="card"><div class="empty">טוען…</div></div>';
+      document.getElementById("personal-sections").innerHTML = '<div class="card"><div class="empty">טוען\u2026</div></div>';
+      return;
+    }
+
+    var dayMode = !!state.selected;
+    var pool = visible(all);
+    var openPool = pool.filter(function(i){return !i.done;});
+
+    function lane(domain){
+      if(state.filter!=="all" && state.filter!==domain) return null;
+      return openPool.filter(function(i){return i.domain===domain;});
+    }
+
+    var w = lane("work"), p = lane("personal");
+    var workEl = document.getElementById("work-sections");
+    var persEl = document.getElementById("personal-sections");
+    var doneList = pool.filter(function(i){return i.done;})
+      .sort(function(a,b){return (b.doneAt||"")<(a.doneAt||"")?-1:1;}).slice(0,30);
+
+    document.querySelector(".lane.work").hidden = (w===null);
+    document.querySelector(".lane.personal").hidden = (p===null);
+
+    if(w){
+      var wTasks = w.filter(function(i){return i.kind==="task";}).sort(sortItems);
+      var wMail  = w.filter(function(i){return i.kind==="email";}).sort(sortItems);
+      var wMeet  = w.filter(function(i){return i.kind==="meeting";})
+                    .filter(function(i){return dayMode || !i.due || i.due>=TODAY;}).sort(sortByTime);
+      document.getElementById("c-work").textContent = w.length+" פתוחים";
+      workEl.innerHTML =
+        section("משימות לטיפול",wTasks,{empty:dayMode?"אין משימות עבודה ליום זה.":"אין משימות עבודה פתוחות."})+
+        section("מיילים לטיפול",wMail,{empty:dayMode?"אין מיילים ליום זה.":"אין מיילים ממתינים."})+
+        meetingsSection(wMeet)+
+        (state.filter==="work"?doneSection(doneList):"");
+    }
+    if(p){
+      var pTasks = p.filter(function(i){return i.kind!=="meeting";}).sort(sortItems);
+      var pEvents= p.filter(function(i){return i.kind==="meeting";})
+                    .filter(function(i){return dayMode || !i.due || i.due>=TODAY;}).sort(sortByTime);
+      document.getElementById("c-personal").textContent = p.length+" פתוחים";
+      persEl.innerHTML =
+        section("משימות אישיות",pTasks,{empty:dayMode?"אין משימות אישיות ליום זה.":"אין משימות אישיות פתוחות."})+
+        section("אירועים ותאריכים",pEvents,{hideWhenEmpty:true})+
+        shoppingSection()+
+        (state.filter!=="work"?doneSection(doneList):"");
+    }
+
+    if(restoreShopFocus!==null){
+      var si = document.getElementById("s-title");
+      if(si){ si.value = restoreShopFocus; si.focus(); }
+      restoreShopFocus = null;
+    }
+  }
+
+  /* ---------- events ---------- */
+  // keep the caret in a note while its own buttons are clicked
+  document.addEventListener("mousedown",function(e){
+    if(e.target.closest("[data-noteact]")) e.preventDefault();
+  });
+
+  document.addEventListener("focusin",function(e){
+    if(e.target.matches("[data-noteinput]")){
+      editingNote = e.target.closest("[data-note]").getAttribute("data-note");
+    }
+  });
+  document.addEventListener("focusout",function(e){
+    if(e.target.matches("[data-noteinput]")){
+      var id = e.target.closest("[data-note]").getAttribute("data-note");
+      editingNote = null;
+      saveNote(id, e.target.value);
+    }
+  });
+
+  document.addEventListener("click",function(e){
+    var na = e.target.closest("[data-noteact]");
+    if(na){
+      var na_act = na.getAttribute("data-noteact");
+      if(na_act === "add"){ addNote(); return; }
+      if(na_act === "undo"){
+        var back = pendingUndo;
+        pendingUndo = null;
+        document.getElementById("banner").innerHTML = "";
+        if(back) addNote(back);
+        return;
+      }
+      var card = na.closest("[data-note]");
+      if(!card) return;
+      var nid = card.getAttribute("data-note");
+      var ta = card.querySelector("textarea");
+      editingNote = null;
+      if(ta) saveNote(nid, ta.value);
+      if(na_act === "color") cycleNoteColor(nid);
+      else if(na_act === "del") deleteNote(nid);
+      return;
+    }
+    var btn = e.target.closest("[data-act]");
+    if(btn){
+      var id = btn.closest(".row").getAttribute("data-id");
+      var act = btn.getAttribute("data-act");
+      if(act==="toggle") toggleDone(id);
+      else if(act==="del") removeItem(id);
+      else if(act==="snooze") snooze(id,1);
+      return;
+    }
+    var day = e.target.closest("[data-day]");
+    if(day){
+      var iso = day.getAttribute("data-day");
+      state.selected = (state.selected===iso) ? null : iso;
+      render();
+      return;
+    }
+    var cv = e.target.closest("[data-calview]");
+    if(cv){
+      state.view = cv.getAttribute("data-calview");
+      if(state.view==="week" && state.selected) state.cursor = state.selected;
+      render();
+      return;
+    }
+    var cal = e.target.closest("[data-cal]");
+    if(cal){
+      var a = cal.getAttribute("data-cal");
+      if(a==="prev") state.cursor = state.view==="month" ? firstOfMonthISO(state.cursor,-1) : addDaysISO(state.cursor,-7);
+      else if(a==="next") state.cursor = state.view==="month" ? firstOfMonthISO(state.cursor,1) : addDaysISO(state.cursor,7);
+      else if(a==="today"){ state.cursor = TODAY; state.selected = null; }
+      else if(a==="clearday") state.selected = null;
+      render();
+      return;
+    }
+    var sc = e.target.closest("[data-shop]");
+    if(sc){
+      items.filter(function(i){return i.kind==="shopping" && i.done;})
+           .forEach(function(i){ removeItem(i.id); });
+      return;
+    }
+    var f = e.target.closest("[data-filter]");
+    if(f){
+      state.filter = f.getAttribute("data-filter");
+      document.querySelectorAll("[data-filter]").forEach(function(b){
+        b.setAttribute("aria-pressed", b===f ? "true":"false");
+      });
+      render();
+    }
+  });
+
+  document.getElementById("addnote").addEventListener("click",function(){ addNote(); });
+
+  document.getElementById("btn-connect").addEventListener("click",function(){
+    connect(document.getElementById("tokinput").value);
+    document.getElementById("tokinput").value = "";
+  });
+  document.getElementById("tokinput").addEventListener("keydown",function(e){
+    if(e.key === "Enter"){ e.preventDefault(); document.getElementById("btn-connect").click(); }
+  });
+  document.getElementById("btn-skip").addEventListener("click",function(){
+    document.getElementById("setup").hidden = true;
+  });
+  document.getElementById("btn-connect-open").addEventListener("click",function(){
+    document.getElementById("setup").hidden = false;
+    document.getElementById("tokinput").focus();
+  });
+  document.getElementById("btn-disconnect").addEventListener("click",disconnect);
+  document.getElementById("btn-export").addEventListener("click",exportData);
+  document.getElementById("file-import").addEventListener("change",function(e){
+    if(e.target.files && e.target.files[0]) importData(e.target.files[0]);
+    e.target.value = "";
+  });
+  document.getElementById("btn-sync").addEventListener("click",function(){
+    if(!token || !gistId){ flash("אין חיבור לגיטהב עדיין."); return; }
+    if(dirty) pushGist();
+    else pullGist(true).then(function(){ setSync("ok"); }).catch(function(err){ setSync("error", err.message); });
+  });
+
+  document.getElementById("btn-late").addEventListener("click",function(){
+    state.onlyUrgentWindow = !state.onlyUrgentWindow;
+    this.textContent = state.onlyUrgentWindow ? "הצגת הכל" : "רק באיחור ולהיום";
+    this.style.borderColor = state.onlyUrgentWindow ? "var(--accent)" : "";
+    this.style.color = state.onlyUrgentWindow ? "var(--accent)" : "";
+    render();
+  });
+
+  document.getElementById("btn-clear").addEventListener("click",function(){
+    items.filter(function(i){return i.sample;}).forEach(function(i){ removeItem(i.id); });
+  });
+
+  document.addEventListener("submit",function(e){
+    if(e.target.id!=="shopform") return;
+    e.preventDefault();
+    var si = document.getElementById("s-title");
+    var v = si.value.trim();
+    if(!v) return;
+    addItem({title:v, domain:"personal", kind:"shopping", priority:"normal"});
+    si.value = "";
+    si.focus();
+  });
+
+  document.getElementById("addform").addEventListener("submit",function(e){
+    e.preventDefault();
+    var t = document.getElementById("f-title");
+    var title = t.value.trim();
+    if(!title) return;
+    addItem({
+      title: title,
+      domain: document.getElementById("f-domain").value,
+      kind: document.getElementById("f-kind").value,
+      priority: document.getElementById("f-priority").value,
+      due: document.getElementById("f-due").value
+    });
+    t.value = "";
+    document.getElementById("f-due").value = "";
+    t.focus();
+  });
+
+  render();
+  renderNotes();
+})();
+</script>
+</body>
+</html>
