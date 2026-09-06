@@ -155,6 +155,8 @@ h1{
 .setuprow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .setuprow input{flex:1 1 320px;min-width:200px;font-family:ui-monospace,Consolas,monospace;font-size:13px}
 .setuperr{margin-top:9px;color:var(--urgent);font-size:13px;min-height:1em}
+.setup p.warn{background:var(--high-soft);color:var(--high);border-radius:8px;padding:8px 11px;font-size:13px;margin:10px 0 12px}
+.setup p.warn code,.setup p.warn em{color:inherit;background:transparent;font-style:normal;font-weight:700}
 
 /* ---------- summary ---------- */
 .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
@@ -422,12 +424,13 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
     <h3>חיבור לגיטהב</h3>
     <p>הדשבורד שומר את הנתונים ב-Gist <strong>פרטי</strong> בחשבון הגיטהב שלך. הטוקן נשמר בדפדפן הזה בלבד, ונשלח אך ורק אל <code>api.github.com</code>.</p>
     <ol>
-      <li>פתח <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">יצירת Fine-grained token</a> בגיטהב.</li>
-      <li>תחת <strong>Account permissions</strong> בחר <strong>Gists: Read and write</strong>. אל תסמן שום הרשאה נוספת.</li>
-      <li>קבע תוקף (למשל 90 יום), לחץ Generate, והעתק את הטוקן.</li>
+      <li>פתח <a href="https://github.com/settings/tokens/new?scopes=gist&amp;description=yoman-dashboard" target="_blank" rel="noopener">יצירת טוקן קלאסי</a> - הקישור כבר מסמן בשבילך את ההרשאה הנכונה.</li>
+      <li>ודא שמסומן <strong>gist</strong> בלבד, ושכל שאר התיבות ריקות.</li>
+      <li>קבע תוקף (למשל 90 יום), לחץ <strong>Generate token</strong>, והעתק את הטוקן שמתחיל ב-<code>ghp_</code>.</li>
     </ol>
+    <p class="warn">ה-API של Gists לא עובד עם טוקן מסוג <em>fine-grained</em>. חייבים טוקן קלאסי עם ההרשאה <code>gist</code>.</p>
     <div class="setuprow">
-      <input type="password" id="tokinput" placeholder="github_pat_..." autocomplete="off" aria-label="טוקן גיטהב">
+      <input type="password" id="tokinput" placeholder="ghp_..." autocomplete="off" aria-label="טוקן גיטהב">
       <button type="button" class="btn-primary" id="btn-connect">חיבור</button>
       <button type="button" class="ghost" id="btn-skip">להמשיך בלי סנכרון</button>
     </div>
@@ -747,9 +750,16 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
       render(); renderNotes();
     }catch(e){
       token = "";
-      var why = e.status === 401 ? "הטוקן נדחה על ידי גיטהב - בדוק שהעתקת אותו במלואו ושלא פג תוקפו."
-              : e.status === 403 ? "אין לטוקן הרשאת Gists: Read and write."
-              : "החיבור נכשל: " + e.message;
+      var why;
+      if(e.status === 401){
+        why = "גיטהב דחה את הטוקן. אם הוא מתחיל ב-github_pat_ זו הסיבה: צריך טוקן קלאסי שמתחיל ב-ghp_.";
+      } else if(e.status === 403 || e.status === 404){
+        why = "לטוקן אין הרשאת gist. צור טוקן קלאסי חדש וסמן את התיבה gist.";
+      } else if(String(e.message).indexOf("Failed to fetch") > -1){
+        why = "אין תקשורת אל api.github.com. אם פתחת את הקובץ בלחיצה כפולה (כתובת file://) - זו הסיבה. הרץ את start.bat.";
+      } else {
+        why = "החיבור נכשל: " + e.message;
+      }
       setSync("error");
       document.getElementById("setup-err").textContent = why;
     }

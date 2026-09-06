@@ -24,10 +24,15 @@ start.bat
 
 ## חיבור לגיטהב (פעם אחת לכל דפדפן)
 
-1. פתח [יצירת Fine-grained token](https://github.com/settings/personal-access-tokens/new).
-2. תחת **Account permissions** בחר **Gists: Read and write**. אל תסמן שום הרשאה נוספת.
-3. קבע תוקף (מומלץ 90 יום), לחץ Generate והעתק את הטוקן.
+1. פתח [יצירת טוקן קלאסי](https://github.com/settings/tokens/new?scopes=gist&description=yoman-dashboard).
+   הקישור מסמן מראש את ההרשאה הנכונה.
+2. ודא שמסומן **gist** בלבד. אל תסמן שום תיבה נוספת.
+3. קבע תוקף (מומלץ 90 יום), לחץ **Generate token** והעתק את הטוקן (מתחיל ב-`ghp_`).
 4. הדבק אותו בשדה שבראש הדשבורד ולחץ "חיבור".
+
+> **חייב להיות טוקן קלאסי.** ה-API של Gists לא מקבל טוקנים מסוג fine-grained
+> (`github_pat_...`) - התיעוד של גיטהב מציין שנדרש ה-scope בשם `gist`, ואין באותם
+> endpoints את סעיף התמיכה בטוקנים fine-grained.
 
 בפעם הראשונה הדשבורד יוצר בשבילך Gist פרטי בשם `yoman-data.json`. בכל מכשיר נוסף שתתחבר
 בו עם טוקן, הוא יזהה את אותו Gist לבד וימשוך את הנתונים.
@@ -37,7 +42,7 @@ start.bat
 - נשמר ב-`localStorage` של הדפדפן הזה בלבד. לא נכתב לקובץ, לא נכנס ל-git, ולא מגיע לשום
   שרת מלבד `api.github.com`.
 - ניתן למחוק אותו בכל רגע בכפתור "ניתוק" שבראש הדשבורד.
-- ניתן לבטל אותו לגמרי מצד גיטהב ב-[Settings → Tokens](https://github.com/settings/tokens?type=beta).
+- ניתן לבטל אותו לגמרי מצד גיטהב ב-[Settings → Tokens](https://github.com/settings/tokens).
 - זו פשרה מודעת: טוקן שיושב בדפדפן. לכן ההרשאה מצומצמת ל-Gists בלבד, וכדאי לקבוע לו תוקף.
 
 ---
