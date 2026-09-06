@@ -53,20 +53,20 @@
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#0e1218;
+    --paper:#141b28;
     --ground:
-      radial-gradient(1200px 440px at 76% -80px, rgba(140,166,255,.15), transparent 66%),
-      linear-gradient(180deg,#161d2b 0%,#0d1117 58%);
-    --surface:#1a2130;
-    --surface-2:#222b3c;
-    --line:#303b4f;
-    --line-soft:#28323f;
-    --ink:#e9edf6;
-    --ink-2:#b2bccd;
-    --muted:#7e8a9d;
+      radial-gradient(1200px 460px at 76% -80px, rgba(150,175,255,.20), transparent 66%),
+      linear-gradient(180deg,#1e273a 0%,#131926 58%);
+    --surface:#222c40;
+    --surface-2:#2b3750;
+    --line:#3b4863;
+    --line-soft:#323e56;
+    --ink:#eef2fa;
+    --ink-2:#c2ccdd;
+    --muted:#8c98ac;
     --accent:#8ea6ff;
     --accent-soft:#232d4d;
-    --on-accent:#0e1218;
+    --on-accent:#141b28;
     --work:#8ea6ff;
     --work-soft:#232d4d;
     --personal:#45c6b1;
@@ -89,20 +89,20 @@
   }
 }
 :root[data-theme="dark"]{
-  --paper:#0e1218;
+  --paper:#141b28;
   --ground:
-    radial-gradient(1200px 440px at 76% -80px, rgba(140,166,255,.15), transparent 66%),
-    linear-gradient(180deg,#161d2b 0%,#0d1117 58%);
-  --surface:#1a2130;
-  --surface-2:#222b3c;
-  --line:#303b4f;
-  --line-soft:#28323f;
-  --ink:#e9edf6;
-  --ink-2:#b2bccd;
-  --muted:#7e8a9d;
+    radial-gradient(1200px 460px at 76% -80px, rgba(150,175,255,.20), transparent 66%),
+    linear-gradient(180deg,#1e273a 0%,#131926 58%);
+  --surface:#222c40;
+  --surface-2:#2b3750;
+  --line:#3b4863;
+  --line-soft:#323e56;
+  --ink:#eef2fa;
+  --ink-2:#c2ccdd;
+  --muted:#8c98ac;
   --accent:#8ea6ff;
   --accent-soft:#232d4d;
-  --on-accent:#0e1218;
+  --on-accent:#141b28;
   --work:#8ea6ff;
   --work-soft:#232d4d;
   --personal:#45c6b1;
@@ -158,7 +158,9 @@ h1{
 .statusdot.off i{background:var(--urgent)}
 
 /* ---------- sync bar & setup ---------- */
-.syncbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:0 0 14px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.syncbar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:0 0 16px;padding-bottom:13px;border-bottom:1px solid var(--line)}
+.themeseg{margin-inline-end:4px}
+.themeseg button{padding:5px 13px;font-size:12.5px}
 .link{background:none;border:none;padding:0;color:var(--muted);font-size:12.5px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .link:hover{color:var(--accent)}
 .link.danger:hover{color:var(--urgent)}
@@ -444,7 +446,11 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
   </div>
 
   <div class="syncbar">
-    <button type="button" class="link" id="btn-theme" title="החלפת ערכת נושא">ערכה: אוטומטית</button>
+    <div class="seg themeseg" role="group" aria-label="ערכת נושא">
+      <button type="button" data-theme-set="auto">אוטומטי</button>
+      <button type="button" data-theme-set="light">בהיר</button>
+      <button type="button" data-theme-set="dark">כהה</button>
+    </div>
     <button type="button" class="link" id="btn-sync">סנכרון עכשיו</button>
     <button type="button" class="link" id="btn-export">ייצוא גיבוי</button>
     <label class="link" for="file-import">ייבוא גיבוי</label>
@@ -1331,34 +1337,31 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
     document.getElementById("setup").hidden = false;
     document.getElementById("tokinput").focus();
   });
-  var THEMES = [
-    {v:"auto",  label:"ערכה: אוטומטית"},
-    {v:"light", label:"ערכה: בהירה"},
-    {v:"dark",  label:"ערכה: כהה"}
-  ];
   function currentTheme(){
     var t;
     try{ t = localStorage.getItem("yoman.theme"); }catch(e){}
     return (t === "light" || t === "dark") ? t : "auto";
   }
-  function paintThemeButton(){
+  function paintThemeSeg(){
     var v = currentTheme();
-    var m = THEMES.filter(function(x){ return x.v === v; })[0];
-    document.getElementById("btn-theme").textContent = m.label;
+    document.querySelectorAll("[data-theme-set]").forEach(function(b){
+      b.setAttribute("aria-pressed", b.getAttribute("data-theme-set") === v ? "true" : "false");
+    });
   }
-  function cycleTheme(){
-    var v = currentTheme();
-    var next = THEMES[(THEMES.map(function(x){return x.v;}).indexOf(v) + 1) % THEMES.length].v;
+  function setTheme(v){
     try{
-      if(next === "auto") localStorage.removeItem("yoman.theme");
-      else localStorage.setItem("yoman.theme", next);
+      if(v === "auto") localStorage.removeItem("yoman.theme");
+      else localStorage.setItem("yoman.theme", v);
     }catch(e){}
-    if(next === "auto") document.documentElement.removeAttribute("data-theme");
-    else document.documentElement.setAttribute("data-theme", next);
-    paintThemeButton();
+    if(v === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", v);
+    paintThemeSeg();
   }
-  document.getElementById("btn-theme").addEventListener("click",cycleTheme);
-  paintThemeButton();
+  document.addEventListener("click",function(e){
+    var t = e.target.closest("[data-theme-set]");
+    if(t) setTheme(t.getAttribute("data-theme-set"));
+  });
+  paintThemeSeg();
 
   document.getElementById("btn-disconnect").addEventListener("click",disconnect);
   document.getElementById("btn-export").addEventListener("click",exportData);
