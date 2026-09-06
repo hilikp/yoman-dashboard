@@ -10,3 +10,7 @@ desktop.ini
 # never commit credentials
 *.token
 .env
+
+# temp syntax-check artifacts
+_check.js
+_chk*.js
