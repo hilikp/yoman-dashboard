@@ -731,6 +731,9 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
         await pullGist(true);
         var merged = false;
         localItems.forEach(function(it){
+          /* seeded examples are disposable - never push them into the shared store,
+             or every new browser adds another copy of them */
+          if(it.sample) return;
           if(!items.some(function(x){ return x.id === it.id; })){ items.push(it); merged = true; }
         });
         localNotes.forEach(function(nt){
