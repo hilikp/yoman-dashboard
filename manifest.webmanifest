@@ -1,0 +1,17 @@
+{
+  "name": "היומן של יחיאל",
+  "short_name": "היומן",
+  "description": "דשבורד פעילות יומית: משימות, מיילים, פגישות, קניות ופתקים",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#eceef2",
+  "theme_color": "#33478f",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

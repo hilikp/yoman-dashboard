@@ -2,7 +2,14 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#eceef2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11141a" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="היומן">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="manifest" href="manifest.webmanifest">
 <title>היומן של יחיאל</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -357,6 +364,36 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
   .lanes{grid-template-columns:1fr}
   .summary{grid-template-columns:repeat(2,1fr)}
   h1{font-size:26px}
+}
+/* ---------- touch devices ---------- */
+@media (hover:none), (pointer:coarse), (max-width:880px){
+  /* row actions have no hover to reveal them on a phone */
+  .acts{opacity:1}
+  .acts button{padding:9px 11px;font-size:14px}
+  .tick{width:26px;height:26px;font-size:14px;margin-top:0}
+  .row{padding:13px 12px}
+  .row.slim{padding:11px 12px}
+  .row.slim .tick{width:24px;height:24px}
+  /* 16px keeps iOS from zooming the page on focus */
+  input,select,textarea{font-size:16px}
+  .shopadd input{font-size:16px}
+  .sticky textarea{font-size:15px}
+  .syncbar{gap:16px;row-gap:6px}
+  .syncbar .link{padding:7px 0;font-size:13.5px}
+  .seg button{padding:9px 17px;font-size:14px}
+  .ghost{padding:9px 13px;font-size:14px}
+  .btn-primary{padding:10px 20px}
+  .navbtn{width:32px;height:32px;font-size:15px}
+  .calseg button{padding:8px 0;font-size:13px}
+  .notefoot button{padding:8px 10px;font-size:14px}
+  .clearbought{padding:12px}
+  .addnote-tile{min-height:96px}
+}
+@media (max-width:520px){
+  .wrap{padding:18px 14px 56px}
+  h1{font-size:24px}
+  .lane.cal{max-width:none}
+  .noteboard{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>

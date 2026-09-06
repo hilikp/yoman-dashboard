@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="היומן">
+  <rect width="512" height="512" rx="112" fill="#33478f"/>
+  <rect x="112" y="128" width="288" height="272" rx="26" fill="#f4f6fb"/>
+  <rect x="112" y="128" width="288" height="60" rx="26" fill="#0e6b63"/>
+  <rect x="112" y="166" width="288" height="22" fill="#0e6b63"/>
+  <circle cx="186" cy="112" r="20" fill="#f4f6fb"/>
+  <circle cx="326" cy="112" r="20" fill="#f4f6fb"/>
+  <rect x="152" y="232" width="36" height="28" rx="8" fill="#a52c2c"/>
+  <rect x="206" y="238" width="146" height="16" rx="8" fill="#c3c9d6"/>
+  <rect x="152" y="296" width="36" height="28" rx="8" fill="#33478f"/>
+  <rect x="206" y="302" width="120" height="16" rx="8" fill="#c3c9d6"/>
+  <rect x="152" y="360" width="36" height="28" rx="8" fill="#0e6b63"/>
+  <rect x="206" y="366" width="94" height="16" rx="8" fill="#c3c9d6"/>
+</svg>
