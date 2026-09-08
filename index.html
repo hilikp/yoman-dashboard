@@ -366,6 +366,8 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
 .actionitem button.ai-done:hover{border-color:var(--personal);color:var(--personal);background:var(--personal-soft)}
 .actionitem button.ai-delegate:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
 .actionitem button.ai-defer:hover{border-color:var(--high);color:var(--high);background:var(--high-soft)}
+.actionitem button.ai-followup:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.chip.followup{background:var(--accent-soft);color:var(--accent);font-weight:600}
 .delegateform{display:flex;flex-wrap:wrap;gap:6px;align-items:center;width:100%}
 .delegateform input{flex:1 1 150px;min-width:110px;padding:5px 9px;font-size:13px}
 .delegateform button[type=submit]{background:var(--accent);color:var(--on-accent);border:none;font-weight:600}
@@ -999,12 +1001,13 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
     it.delegatedAt = who ? new Date().toISOString() : "";
     touch(); render();
   }
-  function deferItem(id, days){
+  function deferItem(id, days, isFollowUp){
     var it = items.filter(function(x){ return x.id === id; })[0];
     if(!it) return;
     var until = addDaysISO(TODAY, days);
     it.snoozedUntil = until;
     it.due = until;
+    it.followUp = !!isFollowUp;
     touch(); render();
   }
 
@@ -1116,7 +1119,11 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
     if(opts.showDomain) chips.push('<span class="chip '+esc(it.domain)+'">'+(it.domain==="work"?"עבודה":"אישי")+'</span>');
     if(it.from) chips.push('<span class="chip">מאת '+esc(it.from)+'</span>');
     if(it.delegatedTo) chips.push('<span class="chip delegated">הועבר ל'+esc(it.delegatedTo)+'</span>');
-    if(isDeferred(it)) chips.push('<span class="chip deferred">נדחה עד '+esc(dueLabel(it.snoozedUntil))+'</span>');
+    if(isDeferred(it)){
+      chips.push(it.followUp
+        ? '<span class="chip followup">\ud83d\udd14 מעקב מייל \u00b7 '+esc(dueLabel(it.snoozedUntil))+'</span>'
+        : '<span class="chip deferred">נדחה עד '+esc(dueLabel(it.snoozedUntil))+'</span>');
+    }
     if(it.sample) chips.push('<span class="sample-tag">דוגמה</span>');
 
     var note = "";
@@ -1140,6 +1147,7 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
             '<button class="ai-done" data-ai="done">טופל</button>'+
             '<button class="ai-delegate" data-ai="delegate">'+(it.delegatedTo ? 'שינוי הגורם' : 'הועבר לגורם נוסף')+'</button>'+
             '<button class="ai-defer" data-ai="defer">דחה ב-3 ימים</button>'+
+            '<button class="ai-followup" data-ai="followup">מעקב מייל בעוד שבוע</button>'+
           '</div>';
       }
     }
@@ -1215,9 +1223,18 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
   }
 
   function deferredSection(list){
-    if(!list.length) return "";
-    return '<details class="card deferbox"><summary>נדחו למועד אחר ('+list.length+')</summary>'+
-      '<div class="rows">'+list.map(function(i){return rowHTML(i,{});}).join("")+'</div></details>';
+    var plain = list.filter(function(i){ return !i.followUp; });
+    var followUps = list.filter(function(i){ return i.followUp; });
+    var html = "";
+    if(followUps.length){
+      html += '<details class="card deferbox" open><summary>\ud83d\udd14 ממתינים למעקב מייל ('+followUps.length+')</summary>'+
+        '<div class="rows">'+followUps.map(function(i){return rowHTML(i,{});}).join("")+'</div></details>';
+    }
+    if(plain.length){
+      html += '<details class="card deferbox"><summary>נדחו למועד אחר ('+plain.length+')</summary>'+
+        '<div class="rows">'+plain.map(function(i){return rowHTML(i,{});}).join("")+'</div></details>';
+    }
+    return html;
   }
 
   function doneSection(list){
@@ -1502,7 +1519,8 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
       var aiId = aiRow.getAttribute("data-id");
       var aiAct = ai.getAttribute("data-ai");
       if(aiAct === "done"){ delegatingId = null; toggleDone(aiId); }
-      else if(aiAct === "defer"){ delegatingId = null; deferItem(aiId, 3); }
+      else if(aiAct === "defer"){ delegatingId = null; deferItem(aiId, 3, false); }
+      else if(aiAct === "followup"){ delegatingId = null; deferItem(aiId, 7, true); }
       else if(aiAct === "delegate"){ delegatingId = aiId; restoreDelegateFocus = true; render(); }
       else if(aiAct === "cancel"){ delegatingId = null; render(); }
       return;
