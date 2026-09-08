@@ -305,6 +305,33 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
 .sample-tag{font-size:10.5px;border:1px dashed var(--muted);color:var(--muted);border-radius:99px;padding:1px 7px}
 
 
+/* ---------- ACTION ITEM ---------- */
+.actionitem{
+  margin-top:9px;padding-top:8px;border-top:1px dashed var(--line);
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+}
+.ailabel{
+  font-size:9.5px;font-weight:700;letter-spacing:.13em;color:var(--muted);
+  margin-inline-end:2px;white-space:nowrap;
+}
+.actionitem button{
+  font-size:12px;padding:4px 10px;border:1px solid var(--line);background:var(--surface-2);
+  color:var(--ink-2);border-radius:7px;white-space:nowrap;
+}
+.actionitem button:hover{border-color:var(--muted);color:var(--ink)}
+.actionitem button.ai-done:hover{border-color:var(--personal);color:var(--personal);background:var(--personal-soft)}
+.actionitem button.ai-delegate:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.actionitem button.ai-defer:hover{border-color:var(--high);color:var(--high);background:var(--high-soft)}
+.delegateform{display:flex;flex-wrap:wrap;gap:6px;align-items:center;width:100%}
+.delegateform input{flex:1 1 150px;min-width:110px;padding:5px 9px;font-size:13px}
+.delegateform button[type=submit]{background:var(--accent);color:var(--on-accent);border:none;font-weight:600}
+.chip.delegated{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.chip.deferred{background:var(--high-soft);color:var(--high);font-weight:600}
+.deferbox summary{cursor:pointer;padding:9px 14px;font-size:12.5px;color:var(--muted);list-style:none}
+.deferbox summary::-webkit-details-marker{display:none}
+.deferbox summary::before{content:"\25B8 "}
+.deferbox[open] summary::before{content:"\25BE "}
+
 /* ---------- sticky notes ---------- */
 .notes{margin-top:24px}
 .notes .lanehead{margin-bottom:10px}
@@ -395,6 +422,8 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
 }
 /* ---------- touch devices ---------- */
 @media (hover:none), (pointer:coarse), (max-width:880px){
+  .actionitem button{padding:8px 12px;font-size:13px}
+  .delegateform input{font-size:16px}
   /* row actions have no hover to reveal them on a phone */
   .acts{opacity:1}
   .acts button{padding:9px 11px;font-size:14px}
@@ -545,6 +574,8 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
 
   var items = [], notes = [], loaded = false, savedAt = "";
   var state = {filter:"all", onlyUrgentWindow:false, view:"month", cursor:"", selected:null};
+  var delegatingId = null;   // id of the item whose "handed to" field is open
+  var restoreDelegateFocus = null;
 
   /* ---------- helpers ---------- */
   function esc(s){
@@ -583,6 +614,9 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
   function firstOfMonthISO(iso,shift){var d=toDate(iso);return todayISO(new Date(d.getFullYear(),d.getMonth()+(shift||0),1));}
   var monthFmt = new Intl.DateTimeFormat("he-IL",{month:"long",year:"numeric"});
   var dayLongFmt = new Intl.DateTimeFormat("he-IL",{weekday:"long",day:"numeric",month:"long"});
+
+  function isDeferred(it){ return !it.done && it.snoozedUntil && it.snoozedUntil > TODAY; }
+  function needsActionBar(it){ return it.domain === "work" && !it.done; }
 
   function isOverdue(it){return !it.done && it.due && it.due < TODAY;}
   function isToday(it){return !it.done && it.due === TODAY;}
@@ -900,6 +934,22 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
     items = items.filter(function(x){ return x.id !== id; });
     touch(); render();
   }
+  function delegateItem(id, who){
+    var it = items.filter(function(x){ return x.id === id; })[0];
+    if(!it) return;
+    it.delegatedTo = who;
+    it.delegatedAt = who ? new Date().toISOString() : "";
+    touch(); render();
+  }
+  function deferItem(id, days){
+    var it = items.filter(function(x){ return x.id === id; })[0];
+    if(!it) return;
+    var until = addDaysISO(TODAY, days);
+    it.snoozedUntil = until;
+    it.due = until;
+    touch(); render();
+  }
+
   function snooze(id, days){
     var it = items.filter(function(x){ return x.id === id; })[0];
     if(!it) return;
@@ -1007,16 +1057,39 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
     else if(it.priority==="high") chips.push('<span class="chip high">חשוב</span>');
     if(opts.showDomain) chips.push('<span class="chip '+esc(it.domain)+'">'+(it.domain==="work"?"עבודה":"אישי")+'</span>');
     if(it.from) chips.push('<span class="chip">מאת '+esc(it.from)+'</span>');
+    if(it.delegatedTo) chips.push('<span class="chip delegated">הועבר ל'+esc(it.delegatedTo)+'</span>');
+    if(isDeferred(it)) chips.push('<span class="chip deferred">נדחה עד '+esc(dueLabel(it.snoozedUntil))+'</span>');
     if(it.sample) chips.push('<span class="sample-tag">דוגמה</span>');
 
     var note = "";
     if(it.notes) note += '<div class="note">'+esc(it.notes)+'</div>';
     if(it.link) note += '<div class="note"><a href="'+esc(it.link)+'" target="_blank" rel="noopener">פתיחת הקישור</a></div>';
 
+    var actionBar = "";
+    if(needsActionBar(it)){
+      if(delegatingId === it.id){
+        actionBar =
+          '<div class="actionitem"><form class="delegateform" data-delegate="'+esc(it.id)+'">'+
+            '<span class="ailabel">הועבר ל</span>'+
+            '<input type="text" data-delegate-input value="'+esc(it.delegatedTo||"")+'" placeholder="שם הגורם" aria-label="שם הגורם שקיבל את הטיפול">'+
+            '<button type="submit">שמירה</button>'+
+            '<button type="button" data-ai="cancel">ביטול</button>'+
+          '</form></div>';
+      } else {
+        actionBar =
+          '<div class="actionitem">'+
+            '<span class="ailabel">ACTION ITEM</span>'+
+            '<button class="ai-done" data-ai="done">טופל</button>'+
+            '<button class="ai-delegate" data-ai="delegate">'+(it.delegatedTo ? 'שינוי הגורם' : 'הועבר לגורם נוסף')+'</button>'+
+            '<button class="ai-defer" data-ai="defer">דחה ב-3 ימים</button>'+
+          '</div>';
+      }
+    }
     return '<div class="'+cls+'" data-id="'+esc(it.id)+'">'+
       '<button class="tick" data-act="toggle" aria-label="'+(it.done?"ביטול סימון":"סימון כבוצע")+'">✓</button>'+
       '<div class="body"><div class="title">'+esc(it.title)+'</div>'+note+
         (chips.length?'<div class="meta">'+chips.join("")+'</div>':'')+
+        actionBar+
       '</div>'+
       '<div class="acts">'+
         (it.done?'':'<button data-act="snooze" title="דחייה ליום הבא">↩ מחר</button>')+
@@ -1080,6 +1153,12 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
         : '<div class="shopempty">הרשימה ריקה. אפשר להוסיף פריט למעלה.</div>')+
       (bought.length ? '<button type="button" class="clearbought" data-shop="clear">ניקוי שנקנו ('+bought.length+')</button>' : '')+
     '</div>';
+  }
+
+  function deferredSection(list){
+    if(!list.length) return "";
+    return '<details class="card deferbox"><summary>נדחו למועד אחר ('+list.length+')</summary>'+
+      '<div class="rows">'+list.map(function(i){return rowHTML(i,{});}).join("")+'</div></details>';
   }
 
   function doneSection(list){
@@ -1201,15 +1280,18 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
     document.querySelector(".lane.personal").hidden = (p===null);
 
     if(w){
-      var wTasks = w.filter(function(i){return i.kind==="task";}).sort(sortItems);
-      var wMail  = w.filter(function(i){return i.kind==="email";}).sort(sortItems);
-      var wMeet  = w.filter(function(i){return i.kind==="meeting";})
+      var wDeferred = w.filter(isDeferred).sort(sortItems);
+      var wLive = w.filter(function(i){ return !isDeferred(i); });
+      var wTasks = wLive.filter(function(i){return i.kind==="task";}).sort(sortItems);
+      var wMail  = wLive.filter(function(i){return i.kind==="email";}).sort(sortItems);
+      var wMeet  = wLive.filter(function(i){return i.kind==="meeting";})
                     .filter(function(i){return dayMode || !i.due || i.due>=TODAY;}).sort(sortByTime);
       document.getElementById("c-work").textContent = w.length+" פתוחים";
       workEl.innerHTML =
         section("משימות לטיפול",wTasks,{empty:dayMode?"אין משימות עבודה ליום זה.":"אין משימות עבודה פתוחות."})+
         section("מיילים לטיפול",wMail,{empty:dayMode?"אין מיילים ליום זה.":"אין מיילים ממתינים."})+
         meetingsSection(wMeet)+
+        deferredSection(wDeferred)+
         (state.filter==="work"?doneSection(doneList):"");
     }
     if(p){
@@ -1228,6 +1310,11 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
       var si = document.getElementById("s-title");
       if(si){ si.value = restoreShopFocus; si.focus(); }
       restoreShopFocus = null;
+    }
+    if(restoreDelegateFocus && delegatingId){
+      var di = document.querySelector('[data-delegate="'+delegatingId+'"] [data-delegate-input]');
+      if(di){ di.focus(); di.select(); }
+      restoreDelegateFocus = null;
     }
   }
 
@@ -1303,6 +1390,18 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
       else if(a==="today"){ state.cursor = TODAY; state.selected = null; }
       else if(a==="clearday") state.selected = null;
       render();
+      return;
+    }
+    var ai = e.target.closest("[data-ai]");
+    if(ai){
+      var aiRow = ai.closest("[data-id]");
+      if(!aiRow) return;
+      var aiId = aiRow.getAttribute("data-id");
+      var aiAct = ai.getAttribute("data-ai");
+      if(aiAct === "done"){ delegatingId = null; toggleDone(aiId); }
+      else if(aiAct === "defer"){ delegatingId = null; deferItem(aiId, 3); }
+      else if(aiAct === "delegate"){ delegatingId = aiId; restoreDelegateFocus = true; render(); }
+      else if(aiAct === "cancel"){ delegatingId = null; render(); }
       return;
     }
     var sc = e.target.closest("[data-shop]");
@@ -1388,6 +1487,15 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
   });
 
   document.addEventListener("submit",function(e){
+    var df = e.target.closest ? e.target.closest("[data-delegate]") : null;
+    if(df){
+      e.preventDefault();
+      var dId = df.getAttribute("data-delegate");
+      var who = df.querySelector("[data-delegate-input]").value.trim();
+      delegatingId = null;
+      delegateItem(dId, who);
+      return;
+    }
     if(e.target.id!=="shopform") return;
     e.preventDefault();
     var si = document.getElementById("s-title");
