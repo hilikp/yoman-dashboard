@@ -305,6 +305,31 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
 .sample-tag{font-size:10.5px;border:1px dashed var(--muted);color:var(--muted);border-radius:99px;padding:1px 7px}
 
 
+/* ---------- agenda under the calendar ---------- */
+.agenda .rows{padding-bottom:2px}
+.agday{
+  padding:6px 12px 4px;font-size:10.5px;font-weight:700;letter-spacing:.05em;
+  color:var(--ink-2);background:var(--surface-2);border-bottom:1px solid var(--line-soft);
+  display:flex;align-items:center;gap:6px;
+}
+.agday.is-today{color:var(--accent)}
+.agday.is-late{color:var(--urgent)}
+.agrow{
+  display:grid;grid-template-columns:auto 1fr;gap:7px;align-items:start;
+  padding:7px 12px;border-bottom:1px solid var(--line-soft);width:100%;text-align:start;
+  background:transparent;border-inline:none;border-top:none;border-radius:0;font-family:inherit;
+}
+.agrow:last-child{border-bottom:none}
+.agrow:hover{background:var(--surface-2)}
+.agdot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex:none}
+.agdot.w{background:var(--work)}
+.agdot.p{background:var(--personal)}
+.agdot.u{background:var(--urgent)}
+.agtime{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums;display:block}
+.agtitle{font-size:12px;line-height:1.3;color:var(--ink);display:block;word-break:break-word}
+.agrow.is-late .agtitle{color:var(--urgent)}
+.agmore{padding:7px 12px;font-size:10.5px;color:var(--muted);text-align:center}
+
 /* ---------- ACTION ITEM ---------- */
 .actionitem{
   margin-top:9px;padding-top:8px;border-top:1px dashed var(--line);
@@ -423,6 +448,8 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
 /* ---------- touch devices ---------- */
 @media (hover:none), (pointer:coarse), (max-width:880px){
   .actionitem button{padding:8px 12px;font-size:13px}
+  .agrow{padding:11px 12px}
+  .agtitle{font-size:13px}
   .delegateform input{font-size:16px}
   /* row actions have no hover to reveal them on a phone */
   .acts{opacity:1}
@@ -1227,12 +1254,56 @@ button{font-family:inherit;font-size:14px;cursor:pointer;border-radius:8px;borde
       '</div></div>';
   }
 
+  var KIND_ICON = {meeting:"\u25CF", email:"\u2709", task:"\u25A0", shopping:"\u25A0"};
+
+  function agendaHTML(){
+    var horizon = addDaysISO(TODAY, 21);
+    var list = items.filter(function(i){
+      if(i.done || !i.due) return false;
+      if(state.filter !== "all" && i.domain !== state.filter) return false;
+      return i.due <= horizon;   // overdue included, far future excluded
+    }).sort(sortByTime);
+
+    if(!list.length){
+      return '<div class="card agenda"><h3>אירועים ופגישות<span class="n">0</span></h3>'+
+        '<div class="empty">אין פריטים עם תאריך בשלושת השבועות הקרובים.</div></div>';
+    }
+
+    var shown = list.slice(0, 14);
+    var html = "", lastDay = "";
+    shown.forEach(function(it){
+      if(it.due !== lastDay){
+        lastDay = it.due;
+        var late = it.due < TODAY;
+        var cls = "agday" + (it.due === TODAY ? " is-today" : (late ? " is-late" : ""));
+        var label = dueLabel(it.due) + " \u00b7 " + dateFmt.format(toDate(it.due));
+        if(late) label = "באיחור \u00b7 " + dateFmt.format(toDate(it.due));
+        html += '<div class="'+cls+'">'+esc(label)+'</div>';
+      }
+      var dot = (isOverdue(it) || it.priority === "urgent") ? "u" : (it.domain === "work" ? "w" : "p");
+      var meta = [];
+      if(it.time) meta.push(it.time);
+      meta.push(KIND[it.kind] || "");
+      if(it.delegatedTo) meta.push("הועבר ל" + it.delegatedTo);
+      html += '<button type="button" class="agrow'+(isOverdue(it)?" is-late":"")+'" data-day="'+esc(it.due)+'">'+
+        '<span class="agdot '+dot+'"></span>'+
+        '<span><span class="agtitle">'+esc(it.title)+'</span>'+
+        '<span class="agtime">'+esc(meta.filter(Boolean).join(" \u00b7 "))+'</span></span>'+
+      '</button>';
+    });
+    if(list.length > shown.length){
+      html += '<div class="agmore">ועוד '+(list.length - shown.length)+' פריטים בהמשך</div>';
+    }
+    return '<div class="card agenda"><h3>אירועים ופגישות<span class="n">'+list.length+'</span></h3>'+
+      '<div class="rows">'+html+'</div></div>';
+  }
+
   function render(){
     if(!state.cursor) state.cursor = TODAY;
     var act = document.activeElement;
     var keepShop = act && act.id==="s-title" ? act.value : null;
     restoreShopFocus = keepShop;
-    document.getElementById("calendar").innerHTML = calendarHTML();
+    document.getElementById("calendar").innerHTML = calendarHTML() + agendaHTML();
 
     var dc = document.getElementById("daychip");
     dc.innerHTML = state.selected
